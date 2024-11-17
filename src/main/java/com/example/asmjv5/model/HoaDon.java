@@ -1,0 +1,56 @@
+package com.example.asmjv5.model;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.util.Date;
+import java.util.List;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(name = "hoa_don")
+public class HoaDon {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @ManyToOne
+    @JoinColumn(name = "id_khach_hang")
+    private KhachHang khachHang;
+
+    private String trangThai;
+
+    @Column(name = "ngay_tao")
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    private Date ngayTao;
+
+    @Column(name = "ngay_sua")
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    private Date ngaySua;
+
+    private String diaChi;
+
+    private String soDienThoai;
+
+    @OneToMany(mappedBy = "hoaDon", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Hdct> hoaDonChiTiet;
+
+
+    public double getTongTien() {
+        double tongTien = 0;
+        if (hoaDonChiTiet != null) {
+            for (Hdct hdct : hoaDonChiTiet) {
+                tongTien += hdct.getGiaBan() * hdct.getSoLuongMua();
+            }
+        }
+        return tongTien;
+    }
+
+}
